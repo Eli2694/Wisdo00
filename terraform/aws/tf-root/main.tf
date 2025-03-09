@@ -81,6 +81,21 @@ module "main" {
     }
   }
 
+    gt-route-tables-associations = {
+    ig-asso01 = {
+      subnet_name = "subnet01-public"
+      route_table_name = "ig-rt"  
+    }
+    ig-asso02 = {
+      subnet_name = "subnet02-public"
+      route_table_name = "ig-rt"  
+    }
+    ig-asso03 = {
+      subnet_name = "subnet03-public"
+      route_table_name = "ig-rt"  
+    }
+  }
+
   nat-route-tables = {
     nat-gw01-rt = {
       vpc_name = "main"
@@ -96,21 +111,6 @@ module "main" {
       vpc_name = "main"
       cidr_block = "0.0.0.0/0"
       nat_gateway_name = "nat-gw03"
-    }
-  }
-
-  gt-route-tables-associations = {
-    ig-asso01 = {
-      subnet_name = "subnet01-public"
-      route_table_name = "ig-rt"  
-    }
-    ig-asso02 = {
-      subnet_name = "subnet02-public"
-      route_table_name = "ig-rt"  
-    }
-    ig-asso03 = {
-      subnet_name = "subnet03-public"
-      route_table_name = "ig-rt"  
     }
   }
 
