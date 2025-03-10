@@ -186,7 +186,8 @@ variable "ecs-fargate-tasks" {
     role_name                = string
     container_definitions = {
       name          = string
-      image         = string
+      ecr_name      = string
+      tag           = string
       memory        = number
       essential     = optional(bool, true)
       containerPort = optional(number, null)

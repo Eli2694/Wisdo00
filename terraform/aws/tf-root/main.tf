@@ -303,7 +303,8 @@ module "main" {
       role_name                = "nextjs-ecs-task"
       container_definitions = {
         name          = "nextjs-container"
-        image         = "<your-nextjs-image>"
+        ecr_name      = "wisdo-ecr"
+        tag           = var.NEXTJS_DOCKER_IMAGE_TAG
         memory        = 512
         essential     = true
         containerPort = 3000
@@ -316,7 +317,8 @@ module "main" {
       role_name                = "backend-a-ecs-task"
       container_definitions = {
         name          = "grpc-container"
-        image         = "<your-grpc-image>"
+        ecr_name      = "wisdo-ecr"
+        tag           = var.BACKEND_A_IMAGE_TAG
         memory        = 1024
         containerPort = 50051
       }
@@ -328,7 +330,8 @@ module "main" {
       role_name                = "backend-b-ecs-task"
       container_definitions = {
         name          = "sqs-service"
-        image         = "<your-sqs-image>"
+        ecr_name      = "wisdo-ecr"
+        tag           = var.BACKEND_B_IMAGE_TAG
         memory        = 1024
         environment = {
           "QUEUE_URL" = "aws_sqs_queue.app_queue.id",

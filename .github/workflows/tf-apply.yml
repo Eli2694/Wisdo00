@@ -1,0 +1,47 @@
+name: Deploy Terraform
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  TF_VAR_PROD_AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  TF_VAR_PROD_AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  # TF_VAR_PROD_AWS_REGION: "eu-west-1"  # if your provider or variables require a region
+
+# Ensures only one deployment job runs at a time to avoid potential Terraform state lock conflicts.
+concurrency: tf-pipeline-lock
+
+jobs:
+  terraform:
+    name: Deploy Terraform Job
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./terraform/aws/tf-root
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+    #   - name: Set up Terraform
+    #     uses: hashicorp/setup-terraform@v3
+
+    # Require for remote backend tf state update
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Initialize Terraform
+        run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve

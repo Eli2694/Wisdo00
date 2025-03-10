@@ -1,0 +1,87 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+
+# Limits this workflow to one running instance at a time,
+# preventing state lock conflicts in Terraform.
+concurrency: tf-pipeline-lock
+
+jobs:
+  build_and_push_image:
+    name: Build & Push Docker Image
+    runs-on: ubuntu-latest
+    env:
+      AWS_REGION: "eu-west-1"         
+      ECR_REPOSITORY: "my-app-repo"   
+      IMAGE_TAG: ${{ github.sha }}    # Tag the image with current commit SHA
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: ecr_login
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build and Push Docker Image
+        run: |
+          #     The image is tagged with the repository name and the commit SHA.
+          echo "🔨 Build the Docker image using the Dockerfile in the repository root."
+          docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
+      
+          
+          #     This ensures the image is correctly associated with your ECR registry.
+          echo "🏷 Re-tag the built image to match the Amazon ECR repository URI."
+          docker tag $ECR_REPOSITORY:$IMAGE_TAG ${{ steps.ecr_login.outputs.registry }}/$ECR_REPOSITORY:$IMAGE_TAG
+      
+          #     This makes the image available for deployment in your ECS Fargate tasks.
+          echo "🚀 [Push] Push the re-tagged image to Amazon ECR."
+          docker push ${{ steps.ecr_login.outputs.registry }}/$ECR_REPOSITORY:$IMAGE_TAG
+      
+
+  deploy_infra:
+    name: Deploy Infrastructure
+    # This job waits for the build_and_push_image job to complete
+    needs: build_and_push_image
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./terraform/aws/tf-root
+    env:
+      TF_VAR_PROD_AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      TF_VAR_PROD_AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      # Pass the image tag to Terraform so it can update the ECS Task Definition
+      TF_VAR_NEXTJS_DOCKER_IMAGE_TAG: ${{ github.sha }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # Require for remote backend tf state update
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}  
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve

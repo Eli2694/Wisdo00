@@ -18,7 +18,7 @@ resource "aws_ecs_task_definition" "t" {
   container_definitions = jsonencode([
     {
       name      = each.value.container_definitions.name
-      image     = each.value.container_definitions.image
+      image     = "${aws_ecr_repository.images[each.value.container_definitions.ecr_name].repository_url}:${each.value.container_definitions.tag}"
       memory    = each.value.container_definitions.memory
       essential = each.value.container_definitions.essential
       environment = [for k, v in each.value.container_definitions.environment : {
