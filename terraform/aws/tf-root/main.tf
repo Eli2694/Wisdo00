@@ -3,24 +3,24 @@ module "main" {
 
   vpc = {
     main = {
-        cidr_block = "10.0.0.0/16"
+        cidr_block = "10.0.0.0/16" # 65,536 IP addresses. 10.0.0.0 – 10.0.255.255
     }
   }
 
   public_subnets = {
     subnet01-public = {
         vpc_name = "main"
-        cidr_block = "10.0.1.0/24"
+        cidr_block = "10.0.1.0/24" # 256 IP addresses. 10.0.1.0 – 10.0.1.255
         availability_zone = "${var.PROD_AWS_REGION}a"
     }
     subnet02-public = {
         vpc_name = "main"
-        cidr_block = "10.0.2.0/24"
+        cidr_block = "10.0.2.0/24" # 256 IP addresses.
         availability_zone = "${var.PROD_AWS_REGION}b"
     }
     subnet03-public = {
         vpc_name = "main"
-        cidr_block = "10.0.3.0/24"
+        cidr_block = "10.0.3.0/24" # 256 IP addresses.
         availability_zone = "${var.PROD_AWS_REGION}c"
     }
   }
@@ -28,17 +28,17 @@ module "main" {
   private_subnets = { 
     subnet01-private = {
         vpc_name = "main"
-        cidr_block = "10.0.4.0/24"
+        cidr_block = "10.0.4.0/24" # 256 IP addresses. 10.0.4.0 – 10.0.4.255
         availability_zone = "${var.PROD_AWS_REGION}a"
     }
     subnet02-private = {
         vpc_name = "main"
-        cidr_block = "10.0.5.0/24"
+        cidr_block = "10.0.5.0/24" # 256 IP addresses.
         availability_zone = "${var.PROD_AWS_REGION}b"
     }
     subnet03-private = {
         vpc_name = "main"
-        cidr_block = "10.0.6.0/24"
+        cidr_block = "10.0.6.0/24" # 256 IP addresses.
         availability_zone = "${var.PROD_AWS_REGION}c"
     }
   }
