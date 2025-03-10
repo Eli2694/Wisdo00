@@ -20,7 +20,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ./terraform/aws/tf-root
+        working-directory: ./infra/aws/tf-root
 
     steps:
       - name: Checkout code
