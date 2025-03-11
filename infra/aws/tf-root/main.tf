@@ -308,6 +308,11 @@ module "main" {
         memory        = 512
         essential     = true
         containerPort = 3000
+        environment = {
+          "ALB_URL" = "",
+          "gRPC_TARGET_PORT" = ""
+        #   "REGION" = "us-east-1"
+        }
       }
     }
     backend-grpc-task = {

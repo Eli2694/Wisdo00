@@ -21,7 +21,7 @@ resource "aws_lb_target_group" "http" {
   port             = each.value.port
   protocol         = each.value.protocol
   protocol_version = each.value.protocol_version
-  target_type      = each.value.portarget_typet
+  target_type      = each.value.target_type
   vpc_id           = aws_vpc.main[each.value.vpc_name].id
   health_check {
     protocol            = each.value.health_check.port
