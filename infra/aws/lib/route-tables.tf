@@ -2,7 +2,7 @@
 # The main route table is responsible for enabling the flow of traffic within the VPC. 
 # The subnets are associated implicitly
 
-# To make the subnets named “Public” public, we have to create routes using IGW which will enable the traffic from the Internet to access these subnets.
+# To make the subnets public, we have to create routes using IGW which will enable the traffic from the Internet to access these subnets.
 
 # As a best practice, we create a second route table and associate it with the same VPC. 
 # Note that we have also specified the route to the internet (0.0.0.0/0) using our IGW.
