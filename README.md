@@ -1,4 +1,4 @@
 # Wisdo00
 DevOps Assignment
 
-![diagram](image.png)
+![alt text](image-1.png)
