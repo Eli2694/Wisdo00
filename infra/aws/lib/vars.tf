@@ -128,8 +128,8 @@ variable "alb" {
     load_balancer_type  = optional(string, "application") 
     enable_http2        = optional(bool, true)
     internal            = optional(bool, true)
-    security_group_name = string
-    subnet_name         = string
+    security_group_name = list(string)
+    subnet_name         = list(string)
   }))
   default = {}
 }

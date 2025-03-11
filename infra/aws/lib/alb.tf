@@ -6,11 +6,12 @@ resource "aws_alb" "application_load_balancer" {
   enable_http2       = each.value.enable_http2
   internal           = each.value.internal
 
-  security_groups = ["${aws_security_group.sg[each.value.security_group_name].id}"]
+  security_groups = [
+    for security_group_name in  each.value.security_group_name : aws_security_group.sg[security_group_name].id
+  ]
 
   subnets = [
-    "${aws_subnet.private_subnets[each.value.subnet_name].id}"
-    # "${aws_subnet.private_subnets[].id}",
+    for subnet_name in each.value.subnet_name : aws_subnet.private_subnets[subnet_name].id
   ]
   
 }

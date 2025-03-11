@@ -235,8 +235,8 @@ module "main" {
       load_balancer_type   = "application"
       enable_http2         = true
       internal             = true
-      security_group_name  = "alb-private-sg"
-      subnet_name          = "subnet01-private"
+      security_group_name  = ["alb-private-sg"]
+      subnet_name          = ["subnet01-private" , "subnet02-private", "subnet03-private"]
     }
   }
 
